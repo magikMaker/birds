@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<hmtl>
+<head>
+<style>
+*{margin:0;padding:0}
+body,html{background:#242424;height:100%;width:100%}
+</style>
+<script src="./node_modules/magik-vector/lib/magik-vector.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+/*
+//  ----------------------------------------------------------------------------
+//  STEP 1
+//  ----------------------------------------------------------------------------
+
+const canvas = document.getElementById('canvas');
+const HEIGHT = canvas.height = document.body.clientHeight;
+const WIDTH = canvas.width = document.body.clientWidth;
+
+const ctx = canvas.getContext('2d');
+
+ctx.beginPath();
+ctx.arc(40, 40, 20, 0, 2 * Math.PI);
+ctx.fillStyle = 'rgb(0, 100, 255)';
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+
+//  ----------------------------------------------------------------------------
+//  STEP 2
+//  ----------------------------------------------------------------------------
+
+const canvas = document.getElementById('canvas');
+const HEIGHT = canvas.height = document.body.clientHeight;
+const WIDTH = canvas.width = document.body.clientWidth;
+
+const ctx = canvas.getContext('2d');
+
+let x = WIDTH/2;
+let y = 40;
+const r = 20;
+const speedX = 8;
+const speedY = 10;
+
+function draw(){
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    x += speedX;
+    y += speedY;
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgb(0, 100, 255)';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+
+//  ----------------------------------------------------------------------------
+//  STEP 3
+//  ----------------------------------------------------------------------------
+
+
+const canvas = document.getElementById('canvas');
+const HEIGHT = canvas.height = document.body.clientHeight;
+const WIDTH = canvas.width = document.body.clientWidth;
+
+const ctx = canvas.getContext('2d');
+
+const x = WIDTH/2;
+const y = 40;
+const r = 20;
+
+class Point {
+
+    constructor(x, y, r){
+        this.x = x || 0;
+        this.y = y || 0;
+        this.r = r || 20;
+        this.speedX = 8;
+        this.speedY = 10;
+    }
+
+    borders(){
+        if(this.x < -this.r) {
+            this.x = WIDTH + this.r;
+        }
+
+        if(this.y < -this.r) {
+            this.y = HEIGHT + this.r;
+        }
+
+        if(this.x > WIDTH + this.r) {
+            this.x = -this.r;
+        }
+
+        if(this.y > HEIGHT + this.r) {
+            this.y = -this.r;
+        }
+
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgb(0, 100, 255)';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+    }
+}
+
+function draw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    point.borders();
+    point.update();
+    point.draw();
+
+    requestAnimationFrame(draw);
+}
+
+const point = new Point(x, y, r);
+draw();
+
+
+//  ----------------------------------------------------------------------------
+//  STEP 4
+//  ----------------------------------------------------------------------------
+
+
+const canvas = document.getElementById('canvas');
+const HEIGHT = canvas.height = document.body.clientHeight;
+const WIDTH = canvas.width = document.body.clientWidth;
+const ctx = canvas.getContext('2d');
+
+let x = 0; //WIDTH/2;
+let y = 0; //HEIGHT/2;
+let r = 30;
+
+class Point {
+
+    constructor(x, y, r){
+        this.position = new MagikVector(x, y);
+        this.speed = new MagikVector(3, 6);
+        this.r = r;
+    }
+
+    handleBorders(){
+
+        // off to the right
+        if(this.position.getX() > WIDTH + this.r){
+            this.position.setX(-this.r);
+        }
+
+        // off left
+        if(this.position.getX() < -this.r){
+            this.position.setX(WIDTH + this.r);
+        }
+
+        // off bottom
+        if(this.position.getY() > HEIGHT + this.r){
+            this.position.setY(-this.r);
+        }
+
+        // off top
+        if(this.position.getY() < -this.r){
+            this.position.setY(HEIGHT + this.r);
+        }
+    }
+
+    update() {
+        this.handleBorders();
+        this.position.add(this.speed);
+    }
+
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.position.getX(), this.position.getY(), this.r, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgb(100, 100, 200)';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+}
+
+const draw = () => {
+
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    point.update();
+    point.draw();
+
+    window.requestAnimationFrame(draw)
+};
+
+const point = new Point(x, y, r);
+draw();
+
+
+//  ----------------------------------------------------------------------------
+//  STEP 5
+//  ----------------------------------------------------------------------------
+*/
+
+const canvas = document.getElementById('canvas');
+const HEIGHT = canvas.height = document.body.clientHeight;
+const WIDTH = canvas.width = document.body.clientWidth;
+const ctx = canvas.getContext('2d');
+
+let mouseX = canvas.width / 2;
+let mouseY = canvas.height / 2;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.pageX;
+    mouseY = e.pageY;
+});
+
+let x = 0; //WIDTH/2;
+let y = 0; //HEIGHT/2;
+let r = 30;
+
+class Point {
+
+    constructor(x, y, r){
+        this.position = new MagikVector(x, y);
+        this.speed = new MagikVector(3, 6);
+        this.acceleration = new MagikVector(0, 0);
+        this.r = r;
+        this.maxSpeed = 4;
+        this.maxForce = 0.015;
+    }
+
+    handleBorders(){
+
+        // off to the right
+        if(this.position.getX() > WIDTH + this.r){
+            this.position.setX(-this.r);
+        }
+
+        // off left
+        if(this.position.getX() < -this.r){
+            this.position.setX(WIDTH + this.r);
+        }
+
+        // off bottom
+        if(this.position.getY() > HEIGHT + this.r){
+            this.position.setY(-this.r);
+        }
+
+        // off top
+        if(this.position.getY() < -this.r){
+            this.position.setY(HEIGHT + this.r);
+        }
+    }
+
+    update() {
+        this.handleBorders();
+
+        const mouse = new MagikVector(mouseX, mouseY);
+
+        // A vector pointing from the location to the target
+        mouse.subtract(this.position);
+
+        // Normalize desired and scale to maximum speed
+        mouse.normalize();
+        mouse.multiply(this.maxSpeed);
+
+        // Steering = Desired - Velocity
+        const steering = mouse.clone().subtract(this.speed);
+
+        // Limit to maximum steering force
+        steering.limit(this.maxForce);
+
+        this.acceleration.add(steering);
+        this.speed.add(this.acceleration)
+        this.position.add(this.speed);
+    }
+
+    draw(){
+        ctx.beginPath();
+        ctx.arc(this.position.getX(), this.position.getY(), this.r, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgb(100, 100, 200)';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+}
+
+const draw = () => {
+
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    point.update();
+    point.draw();
+
+    window.requestAnimationFrame(draw)
+};
+
+const point = new Point(x, y, r);
+draw();
+
+
+//  ----------------------------------------------------------------------------
+//  STEP FINAL
+//  ----------------------------------------------------------------------------
+
+
+//const canvas = document.getElementById('canvas');
+//const WIDTH = canvas.width = document.body.clientWidth;
+//const HEIGHT = canvas.height = document.body.clientHeight;
+//
+//const ctx = canvas.getContext('2d');
+//const birds = [];
+//
+//let mouseX = canvas.width / 2;
+//let mouseY = canvas.height / 2;
+//
+//document.addEventListener('mousemove', (e) => {
+//    mouseX = e.pageX;
+//    mouseY = e.pageY;
+//});
+//
+//document.addEventListener('click', (e) => {
+//
+//    const numberOfItems = Math.ceil(Math.random() * 5);
+//
+//    for(let i = 0; i < numberOfItems; ++i) {
+//        birds.push(new Bird(mouseX, mouseY));
+//    }
+//});
+//
+//// random Integer
+//const randomInt = (min, max) => {
+//    min = Math.ceil(min);
+//    max = Math.floor(max);
+//    return Math.floor(Math.random() * (max - min + 1)) + min;
+//};
+//
+//// convert to Radians
+//const toRadians = (angle) => {
+//    return angle * (Math.PI / 180);
+//}
+//
+//// game loop
+//function draw() {
+//
+//    // clear the screen
+//    ctx.fillStyle = '#242424';
+//    //ctx.fillRect(0, 0, canvas.width, canvas.height);
+//
+//    ctx.clearRect(0, 0, canvas.width, canvas.height);
+//
+//    birds.forEach((bird) => {
+//        bird.run(birds);
+//    });
+//
+//    requestAnimationFrame(draw);
+//}
+//
+//draw();
+//
+///**
+// * Bird class
+// */
+//class Bird {
+//
+//    constructor(x, y) {
+//
+//        this.acceleration = new MagikVector(0, 0);
+//        this.velocity = new MagikVector(randomInt(-10, 10), randomInt(-10, 10));
+//        this.position = new MagikVector(x, y);
+//        this.r = 3.0;
+//        this.maxSpeed = 3;
+//        this.maxForce = 0.05;
+//
+//    }
+//
+//    run(birds) {
+//
+//        this.flock(birds);
+//        this.update();
+//        this.borders();
+//        this.draw();
+//
+//    }
+//
+//    flock(birds) {
+//
+//        const seperation = this.calculateSeparation(birds);
+//        const alignment = this.calculateAlignment(birds);
+//        const cohesion = this.calculateCohesion(birds);
+//
+//        // weigh the forces
+//        seperation.multiply(1.5);
+//        alignment.multiply(1.0);
+//        cohesion.multiply(1.0);
+//
+//        // Add the force vectors to acceleration
+//        this.applyForce(seperation);
+//        this.applyForce(alignment);
+//        //this.applyForce(cohesion);
+//
+//    }
+//
+//    /**
+//     * Apply the force
+//     *
+//     */
+//    applyForce(force) {
+//
+//        // We could add mass here if we want A = F / M
+//        this.acceleration.add(force);
+//
+//    }
+//
+//    update() {
+//
+//        // update velocity with acceleration
+//        this.velocity.add(this.acceleration);
+//
+//        // limit speed
+//        this.velocity.limit(this.maxSpeed);
+//
+//        // update position with velocity
+//        this.position.add(this.velocity);
+//
+//        // Reset accelertion to 0 each cycle
+//        this.acceleration.multiply(0);
+//
+//    }
+//
+//    /**
+//     * Steering: seek
+//     * Steering = Desired - velocity
+//     *
+//     * @param target
+//     */
+//    seek(target) {
+//
+//        // A vector pointing from the location to the target
+//        const desired = target.clone().subtract(this.position);
+//
+//        // Normalize desired and scale to maximum speed
+//        desired.normalize();
+//        desired.multiply(this.maxSpeed);
+//
+//        // Steering = Desired - Velocity
+//        const steering = desired.clone().subtract(this.velocity);
+//
+//        // Limit to maximum steering force
+//        steering.limit(this.maxforce);
+//
+//        return steering;
+//
+//    }
+//
+//    /**
+//     * Renders a triangle pointing in the direction of velocity
+//     *
+//     * @todo FIXME
+//     */
+//    draw() {
+//
+//        // Draw a triangle rotated in the direction of velocity
+//        const theta = this.velocity.getDirection() + toRadians(90);
+//
+//        ctx.save();
+//        ctx.translate(this.position.getX(), this.position.getY());
+//        ctx.rotate(theta);
+//        ctx.beginPath();
+//        ctx.lineTo(0, -this.r * 2);
+//        ctx.lineTo(-this.r, this.r * 2);
+//        ctx.lineTo(this.r, this.r * 2);
+//        ctx.fillStyle = 'rgba(200, 100, 200, 0.7)'; // randomColour();
+//        ctx.fill();
+//        ctx.strokeStyle = '#fff';
+//        ctx.stroke();
+//        ctx.restore();
+//
+//    }
+//
+//    /**
+//     * when bird flies of the screen, reappear at the opposite side
+//     */
+//    borders() {
+//
+//        if(this.position.getX() < -this.r) {
+//            this.position.setX(WIDTH + this.r);
+//        }
+//
+//        if(this.position.getY() < -this.r) {
+//            this.position.setY(HEIGHT + this.r);
+//        }
+//
+//        if(this.position.getX() > WIDTH + this.r) {
+//            this.position.setX(-this.r);
+//        }
+//
+//        if(this.position.getY() > HEIGHT + this.r) {
+//            this.position.setY(-this.r);
+//        }
+//    }
+//
+//    /**
+//     * Steering method to steer away from nearby birds
+//     *
+//     * @param birds
+//     * @returns {MagikVector}
+//     */
+//    calculateSeparation(birds) {
+//        const desiredSeparation = 25.0;
+//        const steering = new MagikVector(0, 0);
+//        let count = 0;
+//
+//        // For every bird in the system, check if it's too close
+//        for(let i = 0; i < birds.length; ++i) {
+//
+//            const distance = this.position.getDistanceTo(birds[i].position);
+//
+//            if(distance > 0 && distance < desiredSeparation) {
+//
+//                // Calculate vector pointing away from neighbor
+//                const difference = this.position.clone().subtract(birds[i].position);
+//                difference.normalize();
+//
+//                // Weigh by distance
+//                difference.divide(distance);
+//                steering.add(difference);
+//                ++count;
+//            }
+//        }
+//
+//        // Average -- divide by how many
+//        if(count > 0) {
+//            steering.divide(count);
+//        }
+//
+//        // As long as the vector is greater than 0
+//        if(steering.getMagnitude() > 0) {
+//            // Implement Reynolds: Steering = Desired - Velocity
+//            steering.normalize();
+//            steering.multiply(this.maxSpeed);
+//            steering.subtract(this.velocity);
+//            steering.limit(this.maxforce);
+//        }
+//
+//        return steering;
+//    }
+//
+//    /**
+//     * Steering method that calculates the alignment
+//     *
+//     * @param birds
+//     * @returns {MagikVector}
+//     */
+//    calculateAlignment(birds) {
+//
+//        const neighbourDistance = 50;
+//        const sum = new MagikVector(0, 0);
+//        let count = 0;
+//
+//        for(let i = 0; i < birds.length; i++) {
+//
+//            const distance = this.position.getDistanceTo(birds[i].position);
+//
+//            if(distance > this.r && distance < neighbourDistance) {
+//
+//                sum.add(birds[i].velocity);
+//                ++count;
+//
+//            }
+//        }
+//
+//        if(count > 0) {
+//
+//            sum.divide(count);
+//            sum.normalize();
+//            sum.multiply(this.maxSpeed);
+//            // steering = desired - velocity
+//            const steering = sum.clone().subtract(this.velocity);
+//            steering.limit(this.maxforce);
+//            return steering;
+//
+//        } else {
+//
+//            return new MagikVector(0, 0);
+//
+//        }
+//    }
+//
+//    /**
+//     * Steering method to calculate the cohesion between individual Birds
+//     *
+//     * @param {array} birds array with all birds
+//     * @returns {MagikVector} the cohesion Vector
+//     */
+//    calculateCohesion(birds) {
+//        const neighbourDistance = 50;
+//        const sum = new MagikVector(0, 0);   // Start with empty vector to accumulate all locations
+//        let count = 0;
+//
+//        for(let i = 0; i < birds.length; ++i) {
+//
+//            const distance = this.position.getDistanceTo(birds[i].position);
+//
+//            if(distance > 0 && distance < neighbourDistance) {
+//
+//                // Add location
+//                sum.add(birds[i].position);
+//                count++;
+//
+//            }
+//        }
+//
+//        if(count > 0) {
+//
+//            sum.div(count);
+//            // Steer towards the location
+//            return this.seek(sum);
+//
+//        } else {
+//
+//            return new MagikVector(0, 0);
+//
+//        }
+//    }
+//
+//}
+
+</script>
+</body>
+</html>

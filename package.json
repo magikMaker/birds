@@ -1,0 +1,11 @@
+{
+  "name": "birds",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "ssh://git@bitbucket.wsrs.net:7999/mk/birds.git",
+  "author": "Bjørn Wikkeling <bjorn@provaz.eu>",
+  "license": "MIT",
+  "dependencies": {
+    "magik-vector": "*"
+  }
+}
